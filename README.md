@@ -14,7 +14,7 @@ Grab a copy of the pymosyle class and put it in the same folder (to be made a mo
 Copy the config.json.example to config.json and supply information about your Mosyle and Snipe accounts.
 This tool will sync data to Snipe quite fast, if you run your own Snipe server, increase the default API rate limit by adding the following to your .env file:
 
-`API_THROTTLE_PER_MINUTE=1000`
+`API_THROTTLE_PER_MINUTE=10000`
 
 If you use Snipe cloud and cannot adjust this setting, increase snipe rate_limit in the config.json file.  This will make your syncs slower, but you won't hit rate limits.
 

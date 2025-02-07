@@ -213,21 +213,33 @@ def create_or_update_snipe_asset(serial_number, data):
             logger.error("Problem creating new Snipe asset!")
             raise Exception("Problem creating new Snipe asset!")
     else:
-        logger.debug(f"Asset already exists in snipe as ID {row['id']}, proceeding with update")
-        response = requests.patch(f"{config['snipe']['base_url']}/hardware/{row['id']}", headers=snipe_headers,
-                                 data=json.dumps(data))
+        values_changed = False
+        # Check these keys for changes only
+        for key in ["asset_tag", "notes", "name"]:
+            if key == "notes" and data[key] in row[key]:
+                continue
+            if row[key] != data[key]:
+                values_changed = True
 
-        if response.status_code == 200 or response.status_code == 201:
-            response_json = json.loads(response.content)
-            if response_json['status'] == "error":
-                logger.error(response_json['messages'])
-                raise Exception("Snipe returned an error during the transaction.")
-            row = response_json['payload']
-            logger.info(f"Updated asset {data['asset_tag']} with serial {serial_number} and ID {row['id']}")
-            return row
+        if values_changed:
+            logger.debug(f"Asset already exists in snipe as ID {row['id']}, proceeding with update")
+            response = requests.patch(f"{config['snipe']['base_url']}/hardware/{row['id']}", headers=snipe_headers,
+                                     data=json.dumps(data))
+
+            if response.status_code == 200 or response.status_code == 201:
+                response_json = json.loads(response.content)
+                if response_json['status'] == "error":
+                    logger.error(response_json['messages'])
+                    raise Exception("Snipe returned an error during the transaction.")
+                row = response_json['payload']
+                logger.info(f"Updated asset {data['asset_tag']} with serial {serial_number} and ID {row['id']}")
+                return row
+            else:
+                logger.error("Problem updating Snipe asset!")
+                raise Exception("Problem updating Snipe asset!")
         else:
-            logger.error("Problem updating Snipe asset!")
-            raise Exception("Problem updating Snipe asset!")
+            logger.debug(f"Asset already exists in snipe as ID {row['id']}, no update required")
+            return row
 
 
 # Load configuration details from file
@@ -321,7 +333,7 @@ def process_macos():
     # Start retrieving macOS devices
     if config['snipe']['import_macos']:
         logger.info("Retrieving macOS devices from Mosyle")
-        devices = api.get_devices("mac")
+        devices = api.get_devices("mac", max_results=1)
 
         # Preload the models into Snipe
         for device in devices:
