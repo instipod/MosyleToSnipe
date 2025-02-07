@@ -309,8 +309,17 @@ def process_ios():
                         checkout_snipe_asset(snipe_device_details['id'], 0)
                     else:
                         # Get the snipe ID to checkout to
-                        name_parts = f"{device['username']} ".split(" ") # Quick hack to never be out of bounds
-                        snipe_user_id = get_or_create_snipe_user(name_parts[0], name_parts[1], device['useremail'],
+                        name_parts = device['username'].split(" ")
+                        if len(name_parts) == 2:
+                            first_name = name_parts[0]
+                            last_name = name_parts[1]
+                        elif len(name_parts) == 3:
+                            first_name = name_parts[0]
+                            last_name = name_parts[2]
+                        else:
+                            first_name = name_parts[0]
+                            last_name = name_parts[len(name_parts) - 1]
+                        snipe_user_id = get_or_create_snipe_user(first_name, last_name, device['useremail'],
                                                                  device['useremail'])
 
                         if snipe_user_id == 0:
@@ -365,8 +374,17 @@ def process_macos():
                         checkout_snipe_asset(snipe_device_details['id'], 0)
                     else:
                         # Get the snipe ID to checkout to
-                        name_parts = f"{device['username']} ".split(" ") # Quick hack to never be out of bounds
-                        snipe_user_id = get_or_create_snipe_user(name_parts[0], name_parts[1], device['useremail'],
+                        name_parts = device['username'].split(" ")
+                        if len(name_parts) == 2:
+                            first_name = name_parts[0]
+                            last_name = name_parts[1]
+                        elif len(name_parts) == 3:
+                            first_name = name_parts[0]
+                            last_name = name_parts[2]
+                        else:
+                            first_name = name_parts[0]
+                            last_name = name_parts[len(name_parts) - 1]
+                        snipe_user_id = get_or_create_snipe_user(first_name, last_name, device['useremail'],
                                                                  device['useremail'])
 
                         if snipe_user_id == 0:
