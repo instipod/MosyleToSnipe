@@ -171,7 +171,7 @@ def checkout_snipe_asset(asset_id, user_id):
         # This will be a checkout
         # Make sure it is checked in first
         checkout_snipe_asset(asset_id, 0)
-        time.sleep(0.5)
+
         data = {
             "checkout_to_type": "user",
             "status_id": config['snipe']['default_status_id'],
@@ -281,10 +281,14 @@ def process_ios():
 
         # Preload the models into Snipe
         for device in devices:
+            if 'device_model_name' not in device.keys():
+                continue
             get_or_create_snipe_model(device['device_model_name'], device['device_model'], config['snipe']['ios_category_id'])
 
         # Actually import the iOS devices
         for device in devices:
+            if 'device_model_name' not in device.keys():
+                continue
             snipe_model_id = snipe_assets[device['device_model_name']]
 
             data = {
@@ -346,10 +350,14 @@ def process_macos():
 
         # Preload the models into Snipe
         for device in devices:
+            if 'device_model_name' not in device.keys():
+                continue
             get_or_create_snipe_model(device['device_model_name'], device['device_model'], config['snipe']['macos_category_id'])
 
         # Actually import the macOS devices
         for device in devices:
+            if 'device_model_name' not in device.keys():
+                continue
             snipe_model_id = snipe_assets[device['device_model_name']]
 
             data = {
@@ -411,10 +419,14 @@ def process_tvos():
 
         # Preload the models into Snipe
         for device in devices:
+            if 'device_model_name' not in device.keys():
+                continue
             get_or_create_snipe_model(device['device_model_name'], device['device_model'], config['snipe']['tvos_category_id'])
 
         # Actually import the tvOS devices
         for device in devices:
+            if 'device_model_name' not in device.keys():
+                continue
             snipe_model_id = snipe_assets[device['device_model_name']]
 
             data = {
