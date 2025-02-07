@@ -333,7 +333,7 @@ def process_macos():
     # Start retrieving macOS devices
     if config['snipe']['import_macos']:
         logger.info("Retrieving macOS devices from Mosyle")
-        devices = api.get_devices("mac", max_results=1)
+        devices = api.get_devices("mac")
 
         # Preload the models into Snipe
         for device in devices:
