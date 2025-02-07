@@ -1,0 +1,29 @@
+{
+    "mosyle": {
+        "access_token": "",
+        "email": "",
+        "password": ""
+    },
+
+    "snipe": {
+        "base_url": "http://localhost:8000/api/v1",
+        "api_token": "",
+
+        "rate_limit": 0.1,
+
+        "ios_category_id": 2,
+        "mac_category_id": 3,
+        "apple_tv_category_id": 4,
+
+        "apple_manufacturer_id": 1,
+        "apple_supplier_id": 1,
+        "default_status_id": 2,
+
+        "import_ios": true,
+        "import_macos": true,
+        "import_tvos": true,
+
+        "create_users": true,
+        "checkout_devices": true
+    }
+}

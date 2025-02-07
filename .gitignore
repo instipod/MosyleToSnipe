@@ -1,0 +1,7 @@
+.idea
+.code
+venv/
+.env
+__pycache__/
+pymosyle.py
+config.json
