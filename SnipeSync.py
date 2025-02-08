@@ -28,12 +28,18 @@ def get_or_create_snipe_user(first_name, last_name, username, email):
     # Lets look in Snipe
     logger.debug(f"Looking user email {email} to see if it already exists in Snipe")
 
+    if "@" not in email:
+        logger.error(f"Could not find user {email}, since it seems like this isn't an email address.")
+        return 0
+
     response = requests.get(
         f"{config['snipe']['base_url']}/users?limit=1&offset=0&sort=created_at&order=desc&email={quote(email)}&deleted=false&all=false",
         headers=snipe_headers)
 
     if response.status_code != 200:
         # error
+        logger.error(f"Received Snipe error when trying to find user {email}")
+        logger.error(f"Search error returned {response.status_code}; {response.content}")
         raise Exception("Snipe did not return success on this search")
 
     response_json = json.loads(response.content)
@@ -79,14 +85,16 @@ def get_or_create_snipe_model(model_name, model_number, category_id):
         return snipe_assets[model_name]
 
     # If not, lets look in Snipe
-    logger.debug(f"Looking model name {model_number} to see if it already exists in Snipe")
+    logger.debug(f"Looking model name {model_name} to see if it already exists in Snipe")
 
     response = requests.get(
-        f"{config['snipe']['base_url']}/models?limit=50&offset=0&search={model_name}&sort=created_at&order=asc",
+        f"{config['snipe']['base_url']}/models?limit=10&offset=0&search={model_name}&sort=created_at&order=asc",
         headers=snipe_headers)
 
     if response.status_code != 200:
         # error
+        logger.error(f"Received Snipe error when trying to find model {model_name}")
+        logger.error(f"Search error returned {response.status_code}; {response.content}")
         raise Exception("Snipe did not return success on this search")
 
     response_json = json.loads(response.content)
@@ -130,7 +138,9 @@ def get_snipe_asset(serial_number):
 
     if response.status_code != 200:
         # error
-        raise Exception("Snipe did not return success on this search")
+        logger.warning(f"Received Snipe error when trying to find asset {serial_number}")
+        logger.warning(f"Search error returned {response.status_code}; {response.content}")
+        return None
 
     response_json = json.loads(response.content)
     if 'status' in response_json.keys() and response_json['status'] == "error":

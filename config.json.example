@@ -12,8 +12,8 @@
         "rate_limit": 0.1,
 
         "ios_category_id": 2,
-        "mac_category_id": 3,
-        "apple_tv_category_id": 4,
+        "macos_category_id": 3,
+        "tvos_category_id": 4,
 
         "apple_manufacturer_id": 1,
         "apple_supplier_id": 1,
