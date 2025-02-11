@@ -36,15 +36,16 @@ def get_or_create_snipe_user(first_name, last_name, username, email):
         f"{config['snipe']['base_url']}/users?limit=1&offset=0&sort=created_at&order=desc&email={quote(email)}&deleted=false&all=false",
         headers=snipe_headers)
 
-    if response.status_code != 200:
+    if response.status_code != 200 and response.status_code != 404:
         # error
         logger.error(f"Received Snipe error when trying to find user {email}")
         logger.error(f"Search error returned {response.status_code}; {response.content}")
         raise Exception("Snipe did not return success on this search")
 
-    response_json = json.loads(response.content)
+    if response.status_code != 404:
+        response_json = json.loads(response.content)
 
-    if len(response_json['rows']) == 0:
+    if response.status_code == 404 and len(response_json['rows']) == 0:
         if not config['snipe']['create_users']:
             logger.warning(f"Could not find user {email}, but creating users is disabled.")
             return 0
@@ -91,16 +92,17 @@ def get_or_create_snipe_model(model_name, model_number, category_id):
         f"{config['snipe']['base_url']}/models?limit=10&offset=0&search={quote(model_name)}&sort=created_at&order=asc",
         headers=snipe_headers)
 
-    if response.status_code != 200:
+    if response.status_code != 200 and response.status_code != 404:
         # error
         logger.error(f"Received Snipe error when trying to find model {model_name}")
         logger.error(f"Search error returned {response.status_code}; {response.content}")
         time.sleep(1)
         raise Exception("Snipe did not return success on this search")
 
-    response_json = json.loads(response.content)
+    if response.status_code != 404:
+        response_json = json.loads(response.content)
 
-    if len(response_json['rows']) == 0:
+    if response.status_code == 404 or len(response_json['rows']) == 0:
         logger.debug("Model name does not already exist, creating...")
         data = {
             "name": model_name,
@@ -137,19 +139,20 @@ def get_snipe_asset(serial_number):
         f"{config['snipe']['base_url']}/hardware/byserial/{quote(serial_number)}?deleted=false",
         headers=snipe_headers)
 
-    if response.status_code != 200:
+    if response.status_code != 200 and response.status_code != 404:
         # error
         logger.warning(f"Received Snipe error when trying to find asset {serial_number}")
         logger.warning(f"Search error returned {response.status_code}; {response.content}")
         return None
 
-    response_json = json.loads(response.content)
-    if 'status' in response_json.keys() and response_json['status'] == "error":
-        return None
+    if response.status_code != 404:
+        response_json = json.loads(response.content)
+        if 'status' in response_json.keys() and response_json['status'] == "error":
+            return None
 
-    if 'rows' in response_json.keys() and len(response_json['rows']) > 0:
-        row = response_json['rows'][0]
-        return row
+        if 'rows' in response_json.keys() and len(response_json['rows']) > 0:
+            row = response_json['rows'][0]
+            return row
 
     return None
 
