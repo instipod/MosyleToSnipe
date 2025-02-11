@@ -88,13 +88,14 @@ def get_or_create_snipe_model(model_name, model_number, category_id):
     logger.debug(f"Looking model name {model_name} to see if it already exists in Snipe")
 
     response = requests.get(
-        f"{config['snipe']['base_url']}/models?limit=10&offset=0&search={model_name}&sort=created_at&order=asc",
+        f"{config['snipe']['base_url']}/models?limit=10&offset=0&search={quote(model_name)}&sort=created_at&order=asc",
         headers=snipe_headers)
 
     if response.status_code != 200:
         # error
         logger.error(f"Received Snipe error when trying to find model {model_name}")
         logger.error(f"Search error returned {response.status_code}; {response.content}")
+        time.sleep(1)
         raise Exception("Snipe did not return success on this search")
 
     response_json = json.loads(response.content)
