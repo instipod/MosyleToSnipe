@@ -18,6 +18,10 @@ This tool will sync data to Snipe quite fast, if you run your own Snipe server, 
 
 If you use Snipe cloud and cannot adjust this setting, increase snipe rate_limit in the config.json file.  This will make your syncs slower, but you won't hit rate limits.
 
+Install the script dependencies
+
+`pip3 install -r requirements.txt`
+
 Run the script
 
 `python3 SnipeSync.py`
